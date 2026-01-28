@@ -23,10 +23,8 @@ from pyodide.ffi import create_proxy
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
 
-# tile size
 TILE = 32
 
-# simple dungeon map
 dungeon = [
     "##########",
     "#........#",
@@ -35,7 +33,6 @@ dungeon = [
     "##########"
 ]
 
-# player position (in pixels)
 x = TILE * 2
 y = TILE * 2
 speed = 3
@@ -48,49 +45,56 @@ def key_down(event):
 def key_up(event):
     keys.discard(event.key)
 
-key_down_proxy = create_proxy(key_down)
-key_up_proxy = create_proxy(key_up)
-document.addEventListener("keydown", key_down_proxy)
-document.addEventListener("keyup", key_up_proxy)
+document.addEventListener("keydown", create_proxy(key_down))
+document.addEventListener("keyup", create_proxy(key_up))
+
+def is_wall(px, py):
+    tile_x = int(px // TILE)
+    tile_y = int(py // TILE)
+
+    if tile_y < 0 or tile_y >= len(dungeon):
+        return True
+    if tile_x < 0 or tile_x >= len(dungeon[0]):
+        return True
+
+    return dungeon[tile_y][tile_x] == "#"
 
 def draw_map():
-    for row_index, row in enumerate(dungeon):
-        for col_index, tile in enumerate(row):
+    for row_i, row in enumerate(dungeon):
+        for col_i, tile in enumerate(row):
             if tile == "#":
                 ctx.fillStyle = "gray"
-                ctx.fillRect(
-                    col_index * TILE,
-                    row_index * TILE,
-                    TILE,
-                    TILE
-                )
+                ctx.fillRect(col_i * TILE, row_i * TILE, TILE, TILE)
 
 def draw():
     global x, y
 
-    # movement (collision comes later)
-    if "w" in keys:
-        y -= speed
-    if "s" in keys:
-        y += speed
-    if "a" in keys:
-        x -= speed
-    if "d" in keys:
-        x += speed
+    new_x = x
+    new_y = y
 
-    # clear screen
+    if "w" in keys:
+        new_y -= speed
+    if "s" in keys:
+        new_y += speed
+    if "a" in keys:
+        new_x -= speed
+    if "d" in keys:
+        new_x += speed
+
+    # collision check
+    if not is_wall(new_x, new_y):
+        x = new_x
+        y = new_y
+
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    # draw dungeon
     draw_map()
 
-    # draw player
     ctx.fillStyle = "gold"
     ctx.fillRect(x, y, 28, 28)
 
-draw_proxy = create_proxy(draw)
-setInterval(draw_proxy, 16)
+setInterval(create_proxy(draw), 16)
 
     </py-script>
 </body>
