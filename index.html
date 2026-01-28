@@ -11,15 +11,24 @@
 <body>
     <h1>The page is alive.</h1>
 
+    <canvas id="game" width="640" height="480" style="border:2px solid red;"></canvas>
+
     <link rel="stylesheet" href="https://pyscript.net/unstable/pyscript.css" />
     <script defer src="https://pyscript.net/unstable/pyscript.js"></script>
 
     <py-script>
-print("Python is running inside the browser.")
+from js import document
+
+canvas = document.getElementById("game")
+ctx = canvas.getContext("2d")
+
+ctx.fillStyle = "black"
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+ctx.fillStyle = "gold"
+ctx.fillRect(100, 100, 100, 100)
     </py-script>
 </body>
-    
-    <py-script src="game.py"></py-script>
-</body>
+
 </html>
 
