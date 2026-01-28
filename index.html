@@ -18,32 +18,36 @@
 
     <py-script>
 from js import document, setInterval
+from pyodide.ffi import create_proxy
 
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
 
-# the square's position
+# square position
 x = 100
 y = 100
 
 def draw():
     global x
 
-    # clear the screen
+    # clear screen
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    # move the square
+    # move square
     x = x + 1
     if x > canvas.width:
         x = -100
 
-    # draw the square
+    # draw square
     ctx.fillStyle = "gold"
     ctx.fillRect(x, y, 100, 100)
 
-# run 60 times per second
-setInterval(draw, 16)
+# IMPORTANT: wrap the function
+draw_proxy = create_proxy(draw)
+
+# run ~60 times per second
+setInterval(draw_proxy, 16)
 
     </py-script>
 </body>
