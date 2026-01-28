@@ -26,27 +26,47 @@ ctx = canvas.getContext("2d")
 # square position
 x = 100
 y = 100
+speed = 3
+
+# keys currently held
+keys = set()
+
+def key_down(event):
+    keys.add(event.key)
+
+def key_up(event):
+    keys.discard(event.key)
+
+# wrap event handlers
+key_down_proxy = create_proxy(key_down)
+key_up_proxy = create_proxy(key_up)
+
+document.addEventListener("keydown", key_down_proxy)
+document.addEventListener("keyup", key_up_proxy)
 
 def draw():
-    global x
+    global x, y
+
+    # move based on input
+    if "w" in keys:
+        y -= speed
+    if "s" in keys:
+        y += speed
+    if "a" in keys:
+        x -= speed
+    if "d" in keys:
+        x += speed
 
     # clear screen
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    # move square
-    x = x + 1
-    if x > canvas.width:
-        x = -100
-
     # draw square
     ctx.fillStyle = "gold"
     ctx.fillRect(x, y, 100, 100)
 
-# IMPORTANT: wrap the function
+# wrap draw loop
 draw_proxy = create_proxy(draw)
-
-# run ~60 times per second
 setInterval(draw_proxy, 16)
 
     </py-script>
