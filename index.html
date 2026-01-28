@@ -23,12 +23,23 @@ from pyodide.ffi import create_proxy
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
 
-# square position
-x = 100
-y = 100
+# tile size
+TILE = 32
+
+# simple dungeon map
+dungeon = [
+    "##########",
+    "#........#",
+    "#..##....#",
+    "#........#",
+    "##########"
+]
+
+# player position (in pixels)
+x = TILE * 2
+y = TILE * 2
 speed = 3
 
-# keys currently held
 keys = set()
 
 def key_down(event):
@@ -37,17 +48,27 @@ def key_down(event):
 def key_up(event):
     keys.discard(event.key)
 
-# wrap event handlers
 key_down_proxy = create_proxy(key_down)
 key_up_proxy = create_proxy(key_up)
-
 document.addEventListener("keydown", key_down_proxy)
 document.addEventListener("keyup", key_up_proxy)
+
+def draw_map():
+    for row_index, row in enumerate(dungeon):
+        for col_index, tile in enumerate(row):
+            if tile == "#":
+                ctx.fillStyle = "gray"
+                ctx.fillRect(
+                    col_index * TILE,
+                    row_index * TILE,
+                    TILE,
+                    TILE
+                )
 
 def draw():
     global x, y
 
-    # move based on input
+    # movement (collision comes later)
     if "w" in keys:
         y -= speed
     if "s" in keys:
@@ -61,11 +82,13 @@ def draw():
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    # draw square
-    ctx.fillStyle = "gold"
-    ctx.fillRect(x, y, 100, 100)
+    # draw dungeon
+    draw_map()
 
-# wrap draw loop
+    # draw player
+    ctx.fillStyle = "gold"
+    ctx.fillRect(x, y, 28, 28)
+
 draw_proxy = create_proxy(draw)
 setInterval(draw_proxy, 16)
 
