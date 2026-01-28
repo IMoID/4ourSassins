@@ -17,16 +17,34 @@
     <script defer src="https://pyscript.net/unstable/pyscript.js"></script>
 
     <py-script>
-from js import document
+from js import document, setInterval
 
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
 
-ctx.fillStyle = "black"
-ctx.fillRect(0, 0, canvas.width, canvas.height)
+# the square's position
+x = 100
+y = 100
 
-ctx.fillStyle = "gold"
-ctx.fillRect(100, 100, 100, 100)
+def draw():
+    global x
+
+    # clear the screen
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    # move the square
+    x = x + 1
+    if x > canvas.width:
+        x = -100
+
+    # draw the square
+    ctx.fillStyle = "gold"
+    ctx.fillRect(x, y, 100, 100)
+
+# run 60 times per second
+setInterval(draw, 16)
+
     </py-script>
 </body>
 
