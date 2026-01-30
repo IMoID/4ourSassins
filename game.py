@@ -1,3 +1,5 @@
+print("PYTHON STARTED")
+
 from js import document
 
 canvas = document.getElementById("game")
