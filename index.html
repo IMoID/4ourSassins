@@ -19,6 +19,7 @@
     <py-script>
 from js import document, setInterval
 from pyodide.ffi import create_proxy
+import random
 
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
@@ -33,9 +34,16 @@ dungeon = [
     "##########"
 ]
 
+# player
 x = TILE * 2
 y = TILE * 2
 speed = 3
+
+# enemy
+ex = TILE * 6
+ey = TILE * 2
+edir = random.choice(["up", "down", "left", "right"])
+espeed = 2
 
 keys = set()
 
@@ -66,11 +74,29 @@ def draw_map():
                 ctx.fillStyle = "gray"
                 ctx.fillRect(col_i * TILE, row_i * TILE, TILE, TILE)
 
+def move_enemy():
+    global ex, ey, edir
+
+    nx, ny = ex, ey
+
+    if edir == "up":
+        ny -= espeed
+    elif edir == "down":
+        ny += espeed
+    elif edir == "left":
+        nx -= espeed
+    elif edir == "right":
+        nx += espeed
+
+    if is_wall(nx, ny):
+        edir = random.choice(["up", "down", "left", "right"])
+    else:
+        ex, ey = nx, ny
+
 def draw():
     global x, y
 
-    new_x = x
-    new_y = y
+    new_x, new_y = x, y
 
     if "w" in keys:
         new_y -= speed
@@ -81,16 +107,21 @@ def draw():
     if "d" in keys:
         new_x += speed
 
-    # collision check
     if not is_wall(new_x, new_y):
-        x = new_x
-        y = new_y
+        x, y = new_x, new_y
+
+    move_enemy()
 
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     draw_map()
 
+    # enemy
+    ctx.fillStyle = "crimson"
+    ctx.fillRect(ex, ey, 28, 28)
+
+    # player
     ctx.fillStyle = "gold"
     ctx.fillRect(x, y, 28, 28)
 
