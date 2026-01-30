@@ -50,6 +50,7 @@ x = TILE * 2
 y = TILE * 2
 speed = 3
 health = 5
+invincible = 0  # mercy frames timer
 
 # enemy
 ex = TILE * 6
@@ -114,7 +115,7 @@ def move_enemy():
         ex, ey = nx, ny
 
 def draw():
-    global x, y, health
+    global x, y, health, invincible
 
     new_x, new_y = x, y
 
@@ -132,11 +133,14 @@ def draw():
 
     move_enemy()
 
-    # damage check
-    if rectangles_overlap(x, y, PLAYER_SIZE, ex, ey, ENEMY_SIZE):
-        health -= 1
+    # burn down mercy frames
+    if invincible > 0:
+        invincible -= 1
 
-        # knockback (old-school courtesy)
+    # damage check
+    if invincible == 0 and rectangles_overlap(x, y, PLAYER_SIZE, ex, ey, ENEMY_SIZE):
+        health -= 1
+        invincible = 30  # ~0.5 seconds at 60fps
         x = TILE * 2
         y = TILE * 2
 
@@ -145,6 +149,7 @@ def draw():
         health = 5
         x = TILE * 2
         y = TILE * 2
+        invincible = 60
 
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -155,11 +160,12 @@ def draw():
     ctx.fillStyle = "crimson"
     ctx.fillRect(ex, ey, ENEMY_SIZE, ENEMY_SIZE)
 
-    # player
-    ctx.fillStyle = "gold"
-    ctx.fillRect(x, y, PLAYER_SIZE, PLAYER_SIZE)
+    # player (blink while invincible)
+    if invincible % 10 < 5:
+        ctx.fillStyle = "gold"
+        ctx.fillRect(x, y, PLAYER_SIZE, PLAYER_SIZE)
 
-    # health display
+    # UI
     ctx.fillStyle = "white"
     ctx.font = "16px monospace"
     ctx.fillText(f"HP: {health}", 10, 20)
