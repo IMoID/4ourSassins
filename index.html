@@ -141,8 +141,6 @@ def draw():
     if invincible == 0 and rectangles_overlap(x, y, PLAYER_SIZE, ex, ey, ENEMY_SIZE):
         health -= 1
         invincible = 30  # ~0.5 seconds at 60fps
-        x = TILE * 2
-        y = TILE * 2
 
     # death
     if health <= 0:
