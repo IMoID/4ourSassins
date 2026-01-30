@@ -13,9 +13,6 @@
 
     <canvas id="game" width="640" height="480" style="border:2px solid red;"></canvas>
 
-    <link rel="stylesheet" href="https://pyscript.net/unstable/pyscript.css" />
-    <script defer src="https://pyscript.net/unstable/pyscript.js"></script>
-
     <py-script type="text/python">
 from js import document, setInterval
 from pyodide.ffi import create_proxy
@@ -79,7 +76,7 @@ def is_wall(px, py):
 
     return dungeon[tile_y][tile_x] == "#"
 
-    def hits_wall(px, py):
+def hits_wall(px, py):
     corners = [
         (px, py),
         (px + PLAYER_SIZE - 1, py),
@@ -182,13 +179,10 @@ def draw():
     ctx.font = "16px monospace"
     ctx.fillText(f"HP: {health}", 10, 20)
 
-def start():
-    draw()
-
-start_proxy = create_proxy(start)
+draw_proxy = create_proxy(start)
 setInterval(start_proxy, 16)
 
-    </py-script type="text/python">
+    </py-script>
 
 </body>
 
