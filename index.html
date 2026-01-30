@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://pyscript.net/unstable/pyscript.css" />
     <script defer src="https://pyscript.net/unstable/pyscript.js"></script>
 
-    <py-script>
+    <py-script type="text/python">
 from js import document, setInterval
 from pyodide.ffi import create_proxy
 
@@ -188,7 +188,8 @@ def start():
 start_proxy = create_proxy(start)
 setInterval(start_proxy, 16)
 
-    </py-script>
+    </py-script type="text/python">
+
 </body>
 
 </html>
