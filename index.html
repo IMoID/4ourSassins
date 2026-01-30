@@ -19,7 +19,6 @@
     <py-script>
 from js import document, setInterval
 from pyodide.ffi import create_proxy
-import random
 
 canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
@@ -27,11 +26,11 @@ ctx = canvas.getContext("2d")
 TILE = 32
 
 dungeon = [
-    "##########",
-    "#........#",
-    "#..##....#",
-    "#........#",
-    "##########"
+    "##############################",
+    "#..............#.......###...#",
+    "#..####..####..##..#.....#.#.#",
+    "#........#.........#.......#.#",
+    "##############################"
 ]
 
 # player
@@ -42,7 +41,6 @@ speed = 3
 # enemy
 ex = TILE * 6
 ey = TILE * 2
-edir = random.choice(["up", "down", "left", "right"])
 espeed = 2
 
 keys = set()
@@ -68,29 +66,31 @@ def is_wall(px, py):
     return dungeon[tile_y][tile_x] == "#"
 
 def draw_map():
-    for row_i, row in enumerate(dungeon):
-        for col_i, tile in enumerate(row):
+    for r, row in enumerate(dungeon):
+        for c, tile in enumerate(row):
             if tile == "#":
                 ctx.fillStyle = "gray"
-                ctx.fillRect(col_i * TILE, row_i * TILE, TILE, TILE)
+                ctx.fillRect(c * TILE, r * TILE, TILE, TILE)
 
 def move_enemy():
-    global ex, ey, edir
+    global ex, ey
+
+    dx = x - ex
+    dy = y - ey
 
     nx, ny = ex, ey
 
-    if edir == "up":
-        ny -= espeed
-    elif edir == "down":
-        ny += espeed
-    elif edir == "left":
-        nx -= espeed
-    elif edir == "right":
-        nx += espeed
-
-    if is_wall(nx, ny):
-        edir = random.choice(["up", "down", "left", "right"])
+    # choose axis with greater distance
+    if abs(dx) > abs(dy):
+        nx += espeed if dx > 0 else -espeed
+        if is_wall(nx, ey):
+            ny += espeed if dy > 0 else -espeed
     else:
+        ny += espeed if dy > 0 else -espeed
+        if is_wall(ex, ny):
+            nx += espeed if dx > 0 else -espeed
+
+    if not is_wall(nx, ny):
         ex, ey = nx, ny
 
 def draw():
@@ -117,11 +117,9 @@ def draw():
 
     draw_map()
 
-    # enemy
     ctx.fillStyle = "crimson"
     ctx.fillRect(ex, ey, 28, 28)
 
-    # player
     ctx.fillStyle = "gold"
     ctx.fillRect(x, y, 28, 28)
 
