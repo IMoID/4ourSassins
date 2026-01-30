@@ -79,6 +79,19 @@ def is_wall(px, py):
 
     return dungeon[tile_y][tile_x] == "#"
 
+    def hits_wall(px, py):
+    corners = [
+        (px, py),
+        (px + PLAYER_SIZE - 1, py),
+        (px, py + PLAYER_SIZE - 1),
+        (px + PLAYER_SIZE - 1, py + PLAYER_SIZE - 1),
+    ]
+
+    for cx, cy in corners:
+        if is_wall(cx, cy):
+            return True
+    return False
+
 def rectangles_overlap(ax, ay, asize, bx, by, bsize):
     return (
         ax < bx + bsize and
@@ -111,7 +124,7 @@ def move_enemy():
         if is_wall(ex, ny):
             nx += espeed if dx > 0 else -espeed
 
-    if not is_wall(nx, ny):
+    if not hits_wall(nx, ny):
         ex, ey = nx, ny
 
 def draw():
@@ -128,7 +141,7 @@ def draw():
     if "d" in keys:
         new_x += speed
 
-    if not is_wall(new_x, new_y):
+    if not hits_wall(new_x, new_y):
         x, y = new_x, new_y
 
     move_enemy()
