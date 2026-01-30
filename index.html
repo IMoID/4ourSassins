@@ -24,6 +24,8 @@ canvas = document.getElementById("game")
 ctx = canvas.getContext("2d")
 
 TILE = 32
+PLAYER_SIZE = 28
+ENEMY_SIZE = 28
 
 dungeon = [
     "#...################",
@@ -47,6 +49,7 @@ dungeon = [
 x = TILE * 2
 y = TILE * 2
 speed = 3
+health = 5
 
 # enemy
 ex = TILE * 6
@@ -75,6 +78,14 @@ def is_wall(px, py):
 
     return dungeon[tile_y][tile_x] == "#"
 
+def rectangles_overlap(ax, ay, asize, bx, by, bsize):
+    return (
+        ax < bx + bsize and
+        ax + asize > bx and
+        ay < by + bsize and
+        ay + asize > by
+    )
+
 def draw_map():
     for r, row in enumerate(dungeon):
         for c, tile in enumerate(row):
@@ -90,7 +101,6 @@ def move_enemy():
 
     nx, ny = ex, ey
 
-    # choose axis with greater distance
     if abs(dx) > abs(dy):
         nx += espeed if dx > 0 else -espeed
         if is_wall(nx, ey):
@@ -104,7 +114,7 @@ def move_enemy():
         ex, ey = nx, ny
 
 def draw():
-    global x, y
+    global x, y, health
 
     new_x, new_y = x, y
 
@@ -122,16 +132,37 @@ def draw():
 
     move_enemy()
 
+    # damage check
+    if rectangles_overlap(x, y, PLAYER_SIZE, ex, ey, ENEMY_SIZE):
+        health -= 1
+
+        # knockback (old-school courtesy)
+        x = TILE * 2
+        y = TILE * 2
+
+    # death
+    if health <= 0:
+        health = 5
+        x = TILE * 2
+        y = TILE * 2
+
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     draw_map()
 
+    # enemy
     ctx.fillStyle = "crimson"
-    ctx.fillRect(ex, ey, 28, 28)
+    ctx.fillRect(ex, ey, ENEMY_SIZE, ENEMY_SIZE)
 
+    # player
     ctx.fillStyle = "gold"
-    ctx.fillRect(x, y, 28, 28)
+    ctx.fillRect(x, y, PLAYER_SIZE, PLAYER_SIZE)
+
+    # health display
+    ctx.fillStyle = "white"
+    ctx.font = "16px monospace"
+    ctx.fillText(f"HP: {health}", 10, 20)
 
 setInterval(create_proxy(draw), 16)
 
