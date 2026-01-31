@@ -179,8 +179,8 @@ def draw():
     ctx.font = "16px monospace"
     ctx.fillText(f"HP: {health}", 10, 20)
 
-draw_proxy = create_proxy(start)
-setInterval(start_proxy, 16)
+draw_proxy = create_proxy(draw)
+setInterval(draw_proxy, 16)
 
     </py-script>
 
