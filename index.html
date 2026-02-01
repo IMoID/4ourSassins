@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Dungeon</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pyscript@1.1.2/dist/pyscript.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/pyscript@1.1.2/dist/pyscript.js"></script>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      text-align: center;
+      font-family: monospace;
+    }
+
+    canvas {
+      border: 2px solid red;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 
 <body>
   <h1>The page is alive.</h1>
 
-  <py-script>
-print("PyScript is alive.")
-  </py-script>
+  <canvas id="game" width="640" height="480"></canvas>
 
+  <script src="game.js"></script>
 </body>
-
 </html>
-
