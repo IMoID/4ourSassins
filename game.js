@@ -45,6 +45,10 @@ function hitsWall(px, py) {
   return false;
 }
 
+
+
+let facing = "down";
+
 let speed = 4;
 const keys = {};
 
@@ -74,6 +78,11 @@ function draw() {
   if (!hitsWall(newX, newY)) {
     x = newX;
     y = newY;
+ 
+   if (keys["w"] || keys["ArrowUp"]) facing = "up";
+   if (keys["s"] || keys["ArrowDown"]) facing = "down";
+   if (keys["a"] || keys["ArrowLeft"]) facing = "left";
+   if (keys["d"] || keys["ArrowRight"]) facing = "right";
 }
 
   // clear screen
@@ -90,9 +99,32 @@ function draw() {
 }
 
   // draw square
-  ctx.fillStyle = "gold";
-  ctx.fillRect(x, y, size, size);
+ctx.fillStyle = "gold";
+ctx.beginPath();
+
+if (facing === "up") {
+  ctx.moveTo(x + size / 2, y);
+  ctx.lineTo(x, y + size);
+  ctx.lineTo(x + size, y + size);
 }
+else if (facing === "down") {
+  ctx.moveTo(x + size / 2, y + size);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x + size, y);
+}
+else if (facing === "left") {
+  ctx.moveTo(x, y + size / 2);
+  ctx.lineTo(x + size, y);
+  ctx.lineTo(x + size, y + size);
+}
+else if (facing === "right") {
+  ctx.moveTo(x + size, y + size / 2);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x, y + size);
+}
+
+ctx.closePath();
+ctx.fill();
 
 // game loop
 setInterval(draw, 16);
