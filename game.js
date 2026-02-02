@@ -125,6 +125,7 @@ else if (facing === "right") {
 
 ctx.closePath();
 ctx.fill();
+}
 
 // game loop
 setInterval(draw, 16);
