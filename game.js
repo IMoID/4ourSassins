@@ -80,6 +80,15 @@ function draw() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+ for (let r = 0; r < dungeon.length; r++) {
+  for (let c = 0; c < dungeon[r].length; c++) {
+    if (dungeon[r][c] === "#") {
+      ctx.fillStyle = "gray";
+      ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
+    }
+  }
+}
+
   // draw square
   ctx.fillStyle = "gold";
   ctx.fillRect(x, y, size, size);
